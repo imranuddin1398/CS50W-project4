@@ -1,0 +1,47 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+<h1>Following</h1>
+
+<div class="all-posts">
+    {% for post in posts_of_the_page %}
+    <div class="row post">
+        <h5 class="username"><a href="{% url 'profile' user_id=post.user.id %}">@{{ post.user }}</a></h5>
+        <h6 class="content">{{ post.content }}</h6>
+        <h6 class="date">{{ post.date }}</h6>
+
+        <!-- Like/Unlike buttons and count -->
+        <div class="d-flex align-items-center like-unlike-buttons">
+            {% if user.is_authenticated %}
+            <div class="d-flex align-items-center">
+                <button
+                    class="btn btn-info fa {% if post.id in whoYouLiked %}fa-thumbs-down{% else %}fa-thumbs-up{% endif %}"
+                    onclick="likeHandler({{ post.id }}, {{ whoYouLiked }})" id="{{ post.id }}"></button>
+                <p id="like-count-{{ post.id }}" class="ml-2 mb-0">{{ post.like_count }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation example">
+    <ul class="pagination d-flex justify-content-center">
+        {% if posts_of_the_page.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ posts_of_the_page.previous_page_number }}">Previous
+                Page</a></li>
+        {% endif %}
+
+        {% if posts_of_the_page.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ posts_of_the_page.next_page_number }}">Next Page</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% endblock %}
+
+{% load static %}
+<script src="{% static 'network/index.js' %}"></script>
